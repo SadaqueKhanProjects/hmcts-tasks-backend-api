@@ -8,8 +8,12 @@ import java.util.List;
 
 public interface TaskService {
     TaskCase create(String title, String description, Status status, LocalDateTime dueDate, String caseNumber);
+
     List<TaskCase> getAll();
+
     TaskCase getById(int id);
-    TaskCase updateStatus(int id, Status status);
+
+    TaskCase updateStatus(int id, Status newStatus);
+
     void delete(int id);
 }

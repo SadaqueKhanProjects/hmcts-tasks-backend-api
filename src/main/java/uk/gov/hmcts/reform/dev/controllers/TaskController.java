@@ -1,61 +1,74 @@
-public class TaskController {
-
-}
 package uk.gov.hmcts.reform.dev.controllers;
 
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+
+import uk.gov.hmcts.reform.dev.api.TaskMapper;
 import uk.gov.hmcts.reform.dev.api.dto.CreateTaskRequest;
+import uk.gov.hmcts.reform.dev.api.dto.TaskResponse;
 import uk.gov.hmcts.reform.dev.api.dto.UpdateStatusRequest;
 import uk.gov.hmcts.reform.dev.models.TaskCase;
 import uk.gov.hmcts.reform.dev.service.TaskService;
 
 import java.util.List;
 
-/**
- * REST API for TaskCase management.
- */
+import static java.util.stream.Collectors.toList;
+
+import static org.springframework.http.ResponseEntity.status;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
 
-    private final TaskService service;
+    private final TaskService taskService;
 
-    public TaskController(TaskService service) {
-        this.service = service;
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
     }
 
     @PostMapping
-    public ResponseEntity<TaskCase> create(@Valid @RequestBody CreateTaskRequest req) {
-        TaskCase created = service.create(
+    public ResponseEntity<TaskResponse> create(@Valid @RequestBody CreateTaskRequest req) {
+        TaskCase created = taskService.create(
                 req.getTitle(),
                 req.getDescription(),
                 req.getStatus(),
                 req.getDueDate(),
                 req.getCaseNumber());
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        return status(HttpStatus.CREATED).body(TaskMapper.toResponse(created));
     }
 
     @GetMapping
-    public List<TaskCase> list() {
-        return service.getAll();
+    public List<TaskResponse> list() {
+        return taskService.getAll().stream()
+                .map(TaskMapper::toResponse)
+                .collect(toList());
     }
 
     @GetMapping("/{id}")
-    public TaskCase getById(@PathVariable int id) {
-        return service.getById(id);
-    }
-
-    @PatchMapping("/{id}/status")
-    public TaskCase updateStatus(@PathVariable int id, @Valid @RequestBody UpdateStatusRequest req) {
-        return service.updateStatus(id, req.getStatus());
+    public TaskResponse getById(@PathVariable int id) {
+        return TaskMapper.toResponse(taskService.getById(id));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
-        service.delete(id);
+        taskService.delete(id);
+    }
+
+    @PatchMapping("/tasks/{id}/status")
+    public ResponseEntity<TaskCase> updateStatus(@PathVariable int id,
+            @RequestBody UpdateStatusRequest req) {
+        TaskCase updated = taskService.updateStatus(id, req.getStatus());
+        return ResponseEntity.ok(updated);
     }
 }

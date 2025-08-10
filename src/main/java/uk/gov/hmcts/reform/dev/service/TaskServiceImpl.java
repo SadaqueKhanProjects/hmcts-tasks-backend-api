@@ -43,10 +43,14 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskCase updateStatus(int id, Status status) {
-        TaskCase existing = getById(id);
-        existing.setStatus(status);
-        return repo.save(existing);
+    public TaskCase updateStatus(int id, Status newStatus) {
+        TaskCase task = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        task.setStatus(newStatus);
+        repository.save(task); // Important — persist the change
+
+        return task;
     }
 
     @Override
