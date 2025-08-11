@@ -3,64 +3,59 @@ package uk.gov.hmcts.reform.dev.api.dto;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import uk.gov.hmcts.reform.dev.models.Status;
 
-import java.time.LocalDateTime;
-
-/**
- * Web/transport shape only. Validation lives here.
- */
+/** Web/transport shape only. Validation lives here. */
 public class CreateTaskRequest {
-    @NotBlank
-    private String title;
-    private String description;
+  @NotBlank private String title;
+  private String description;
 
-    @NotNull
-    private Status status;
+  @NotNull private Status status;
 
-    @FutureOrPresent(message = "dueDate must not be in the past")
-    private LocalDateTime dueDate;
+  @FutureOrPresent(message = "dueDate must not be in the past")
+  private LocalDateTime dueDate;
 
-    private String caseNumber;
+  private String caseNumber;
 
-    // getters/setters
-    public String getTitle() {
-        return title;
-    }
+  // getters/setters
+  public String getTitle() {
+    return title;
+  }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public Status getStatus() {
-        return status;
-    }
+  public Status getStatus() {
+    return status;
+  }
 
-    public void setStatus(Status status) {
-        this.status = status;
-    }
+  public void setStatus(Status status) {
+    this.status = status;
+  }
 
-    public LocalDateTime getDueDate() {
-        return dueDate;
-    }
+  public LocalDateTime getDueDate() {
+    return dueDate;
+  }
 
-    public void setDueDate(LocalDateTime dueDate) {
-        this.dueDate = dueDate;
-    }
+  public void setDueDate(LocalDateTime dueDate) {
+    this.dueDate = dueDate;
+  }
 
-    public String getCaseNumber() {
-        return caseNumber;
-    }
+  public String getCaseNumber() {
+    return caseNumber;
+  }
 
-    public void setCaseNumber(String caseNumber) {
-        this.caseNumber = caseNumber;
-    }
+  public void setCaseNumber(String caseNumber) {
+    this.caseNumber = caseNumber;
+  }
 }
