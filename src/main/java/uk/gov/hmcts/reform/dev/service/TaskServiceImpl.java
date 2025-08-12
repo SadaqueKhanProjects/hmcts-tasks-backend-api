@@ -3,6 +3,8 @@ package uk.gov.hmcts.reform.dev.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
+
+import uk.gov.hmcts.reform.dev.api.NotFoundException;
 import uk.gov.hmcts.reform.dev.models.Status;
 import uk.gov.hmcts.reform.dev.models.TaskCase;
 import uk.gov.hmcts.reform.dev.repo.SpringDataTaskRepository;
@@ -37,19 +39,19 @@ public class TaskServiceImpl implements TaskService {
   @Override
   public TaskCase getById(int id) {
     return repo.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("Task not found: " + id));
+        .orElseThrow(() -> new NotFoundException("Task not found: " + id));
   }
 
   @Override
   public TaskCase updateStatus(int id, Status newStatus) {
-    TaskCase task = getById(id);
+    TaskCase task = getById(id); // throws NotFoundException -> handled as 404
     task.setStatus(newStatus);
     return repo.save(task);
   }
 
   @Override
   public void delete(int id) {
-    getById(id);
+    getById(id); // ensure 404 if it doesn't exist
     repo.deleteById(id);
   }
 }
